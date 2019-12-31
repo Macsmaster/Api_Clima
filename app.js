@@ -1,40 +1,11 @@
-const lugar = require('./lugar/lugar');
-const clima = require('./clima/clima')
+const getTiempo = require('./get-tiempo');
+const express = require('express');
+const app = express();
+const port = 8080;
 
-const argv = require('yargs').options({
-    direccion: {
-        alias: 'd',
-        desc: 'Dirección de la ciudad para obtener el clima',
-        demand: true,
-    }
-}).argv
+// respond with "hello world" when a GET request is made to the homepage
+app.get('/tiempo/:lugar', async function (req, res) {
+  res.send(await getTiempo.getInfo(req.params.lugar));
+});
 
-
-/* 
-lugar.getLugarLatLng( argv.direccion)
-        .then(console.log) */
-
-/* clima.getClima(40.750000,-74.000000) .then (console.log); */
-
-const getInfo = async (direccion) => {
-
-    try {
-
-        const coords = await lugar.getLugarLatLng(direccion)
-        const temp = await clima.getClima(coords.lat, coords.lon);
-
-        return `El clima de ${coords.direccion} es de ${temp}.`
-
-    } catch (error) {
-        return `No se pudo determinar el clima de ${direccion}`
-    }
-
-
-
-
-}
-
-
-getInfo(argv.direccion)
-    .then(console.log)
-    .catch(console.log);
+app.listen(port, () => console.log(`Example app listening on http://localhost:${port}`));
